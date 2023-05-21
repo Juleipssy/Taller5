@@ -155,7 +155,7 @@ package object Matrices {
   ////////////////////////////////////////////////////////////////////////////////////////////
 
 
-  // Ejercicio 1.2.3 ********* TENGO MIS DUDAS **********
+  // Ejercicio 1.2.3
 
 
   def multMatrizRec(m1: Matriz, m2: Matriz): Matriz = {
@@ -165,12 +165,12 @@ package object Matrices {
       Vector.tabulate(l)((i) => m1(i) ++ m2(i))
     }
 
-    val n = m1.length
-    if (n == 1) {
+    val l = m1.length
+    if (l == 1) {
       Vector(Vector(m1(0)(0) * m2(0)(0)))
     } else {
 
-      val medio = n / 2
+      val medio = l / 2
 
       val a11 = subMatriz(m1, 0, 0, medio)
       val a12 = subMatriz(m1, 0, medio, medio)
@@ -199,11 +199,38 @@ package object Matrices {
 
   ////////////////////////////////////////////////////////////////////////////////////////////
 
-
-  // Ejercicio 1.2.4 *****************FALTA COLOCARLO*********************
+  // Ejercicio 1.2.4
   def multMatrizRecPar(m1: Matriz, m2: Matriz): Matriz = {
-  }
 
+    def unirMatriz(m1: Matriz, m2: Matriz): Matriz = {
+
+      val l = m1.length
+      Vector.tabulate(l)((i) => m1(i) ++ m2(i))
+    }
+
+    val l = m1.length
+    if (l == 1) Vector(Vector(m1(0)(0) * m2(0)(0)))
+    else {
+
+      val medio = l / 2
+
+      val mulIzquierda = task(for (i <- (0 to 1).toVector;
+                                   j <- (0 to 1).toVector) yield
+        multMatrizRecPar(subMatriz(m1, l * i / 2, 0, medio), subMatriz(m2, 0, l * j / 2, medio)))
+
+      val mulDerecha = task(for (i <- (0 to 1).toVector;
+                                 j <- (0 to 1).toVector) yield
+        multMatrizRecPar(subMatriz(m1, l * i / 2, medio, medio), subMatriz(m2, medio, l * j / 2, medio)))
+
+      val Izquierda = mulIzquierda.join()
+      val derecha = mulDerecha.join()
+
+      val subMatrizT = for (i <- (0 to 3).toVector) yield sumMatriz(Izquierda(i), derecha(i))
+
+      unirMatriz(subMatrizT(0), subMatrizT(1)) ++ unirMatriz(subMatrizT(2), subMatrizT(3))
+
+    }
+  }
 
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -229,7 +256,7 @@ package object Matrices {
   def multStrassenPar(m1: Matriz, m2: Matriz): Matriz = {
 
   }
-
-
-
 }
+
+
+
