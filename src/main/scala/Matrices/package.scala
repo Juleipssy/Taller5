@@ -45,27 +45,9 @@ package object Matrices {
     )
   }
 
-  def multMatriz(m1: Matriz, m2: Matriz): Matriz = {
-    val l = m1.length
-    val C = Vector.tabulate(l, l)((i, j) =>
-      (0 until l).map(k => m1(i)(k) * m2(k)(j)).sum
-    )
-    C
-  }
-
-
-  def multMatriz(m1: Matriz, m2: Matriz): Matriz = {
-    val l = m1.length
-    val m2 = transpuesta(m2)
-    Vector.tabulate(l, l)((i, j) => prodPunto(m1(i), m2(j)))
-  }
-
-
-
   ////////////////////////////////////////////////////////////////////////////////////
 
   // Ejercicio 1.1.2 ***********HAY ERROR******
-
 
   def multMatrizPar(m1: Matriz, m2: Matriz): Matriz = {
     val l = m1.length
@@ -99,7 +81,7 @@ package object Matrices {
 
   // Ejercicio 1.2.1   ********DUDAS SOBRE .MAP ***************************
 
-
+/*
   def subMatriz(m: Matriz, i: Int, j: Int, l: Int): Matriz = {
     val submatriz = (0 until l).map(a => (0 until l).map(c => m(i + a)(j + c)).toVector).toVector
 
@@ -116,7 +98,7 @@ package object Matrices {
     } yield b.toVector
 
     submatriz.toVector
-  }
+  }*/
 
   def subMatriz(m: Matriz, i: Int, j: Int, l: Int): Matriz = {
     Vector.tabulate(l, l)((x, y) => m(i + x)(y + j))
@@ -126,19 +108,19 @@ package object Matrices {
   //////////////////////////////////////////////////////////////////////////////////////
 
   // Ejercicio 1.2.2
-
+/*
   def sumMatriz(m1: Matriz, m2: Matriz): Matriz = {
     val l = m1.length
     val resultado = (0 until l).map(i => (0 until l).map(j => m1(i)(j) + m2(i)(j)).toVector).toVector
     resultado
   }
-
+*/
   def sumMatriz(m1: Matriz, m2: Matriz): Matriz = {
     val l = m1.length
     Vector.tabulate(l, l)((i, j) => m1(i)(j) + m2(i)(j))
   }
 
-
+/*
   def sumMatriz(m1: Matriz, m2: Matriz): Matriz = {
     val l = m1.length
 
@@ -149,7 +131,7 @@ package object Matrices {
     }
     resultado.map(_.toVector).toVector
   }
-
+*/
 
 
   ////////////////////////////////////////////////////////////////////////////////////////////
