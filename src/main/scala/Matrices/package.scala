@@ -49,7 +49,16 @@ package object Matrices {
 
   // Ejercicio 1.1.2 ***********HAY ERROR******
 
-  def multMatrizPar(m1: Matriz, m2: Matriz): Matriz = {
+  def multMatrizPar(m1: Matrix, m2: Matrix): Matrix = {
+    val l = m1.length
+    Vector.tabulate(l, l) { (i, j) =>
+      (0 until l).map(k => m1(i)(k) * m2(k)(j)).sum
+    }.par
+  }
+
+
+
+/*  def multMatrizPar(m1: Matriz, m2: Matriz): Matriz = {
     val l = m1.length
 
     val C = Vector.tabulate(l, l)((i, j) => {
@@ -75,7 +84,7 @@ package object Matrices {
     }
   }
 
-
+*/
 
   ////////////////////////////////////////////////////////////////////////////////////
 
@@ -227,17 +236,53 @@ package object Matrices {
   ///////////////////////////////////////////////////////////////////////////////////////////////////
 
   // Ejercicio 1.3.2
-  def multStrassen(m1: Matriz, m2: Matriz): Matriz = {
 
+  def multiStrassen(m1: Matriz, m2: Matriz): Matriz = {
+    val n = m1.length
+
+    if (n == 1) {
+      Vector(Vector(m1(0)(0) * m2(0)(0)))
+    } else {
+      val medio = n / 2
+
+      val a11 = subMatriz(m1, 0, 0, medio)
+      val a12 = subMatriz(m1, 0, medio, medio)
+      val a21 = subMatriz(m1, medio, 0, medio)
+      val a22 = subMatriz(m1, medio, medio, medio)
+
+      val b11 = subMatriz(m2, 0, 0, medio)
+      val b12 = subMatriz(m2, 0, medio, medio)
+      val b21 = subMatriz(m2, medio, 0, medio)
+      val b22 = subMatriz(m2, medio, medio, medio)
+
+      // Calcular las submatrices recursivamente
+      val p1 = multiStrassen(sumMatriz(a11, a22), sumMatriz(b11, b22))
+      val p2 = multiStrassen(sumMatriz(a21, a22), b11)
+      val p3 = multiStrassen(a11, restaMatriz(b12, b22))
+      val p4 = multiStrassen(a22, restaMatriz(b21, b11))
+      val p5 = multiStrassen(sumMatriz(a11, a12), b22)
+      val p6 = multiStrassen(restaMatriz(a21, a11), sumMatriz(b11, b12))
+      val p7 = multiStrassen(restaMatriz(a12, a22), sumMatriz(b21, b22))
+
+      val c11 = restaMatriz(sumMatriz(sumMatriz(p1, p4), p7), p5)
+      val c12 = sumMatriz(p3, p5)
+      val c21 = sumMatriz(p2, p4)
+      val c22 = restaMatriz(sumMatriz(sumMatriz(p1, p3), p6), p2)
+
+      val arriba = Vector.tabulate(n)(i => c11(i) ++ c12(i))
+      val abajo = Vector.tabulate(n)(i => c21(i) ++ c22(i))
+      arriba ++ abajo
+    }
   }
 
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // Ejercicio 1.3.3
+  /*
   def multStrassenPar(m1: Matriz, m2: Matriz): Matriz = {
 
-  }
+  }*/
 }
 
 
