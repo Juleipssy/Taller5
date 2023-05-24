@@ -49,99 +49,34 @@ package object Matrices {
 
   // Ejercicio 1.1.2 ***********HAY ERROR******
 
-  def multMatrizPar(m1: Matrix, m2: Matrix): Matrix = {
-    val l = m1.length
-    Vector.tabulate(l, l) { (i, j) =>
-      (0 until l).map(k => m1(i)(k) * m2(k)(j)).sum
-    }.par
-  }
-
-
-
-/*  def multMatrizPar(m1: Matriz, m2: Matriz): Matriz = {
-    val l = m1.length
-
-    val C = Vector.tabulate(l, l)((i, j) => {
-      (0 until l).par.map(k => m1(i)(k) * m2(k)(j)).sum
-    })
-    C
-
-  }
-
   def multMatrizPar(m1: Matriz, m2: Matriz): Matriz = {
-    val l1 = m1.length
-    val l2 = m2.length
-    val m2T = transpuesta(m2)
+    val l = m1.length
+    val m2Transpuesta = transpuesta(m2)
 
-    if (l1 >= 4) {
-      val mid = l1 / 2
-      val (m1R, m1L) = m1 splitAt (mid)
-      val (r1, r2) = parallel(multMatrizPar(m1R, m2), multMatrizPar(m1L, m2))
-      r1 ++ r2
-    }
-    else {
-      Vector.tabulate(l1, l2)((i, j) => prodPunto(m1(i), m2T(j)))
-    }
+    val resultado = Vector.tabulate(l, l)((i, j) =>
+      (0 until l).foldLeft(0)((acc, k) =>
+        acc + m1(i)(k) * m2Transpuesta(j)(k)
+      )
+    )
+    parallel(m2Transpuesta,resultado)
+    resultado
   }
-
-*/
 
   ////////////////////////////////////////////////////////////////////////////////////
 
   // Ejercicio 1.2.1   ********DUDAS SOBRE .MAP ***************************
 
-/*
-  def subMatriz(m: Matriz, i: Int, j: Int, l: Int): Matriz = {
-    val submatriz = (0 until l).map(a => (0 until l).map(c => m(i + a)(j + c)).toVector).toVector
-
-    submatriz
-  }
-
-
-  def subMatriz(m: Matriz, i: Int, j: Int, l: Int): Matriz = {
-    val submatriz = for {
-      a <- i until (i + l)
-      b = for {
-        c <- j until (j + l)
-      } yield m(a)(c)
-    } yield b.toVector
-
-    submatriz.toVector
-  }*/
-
   def subMatriz(m: Matriz, i: Int, j: Int, l: Int): Matriz = {
     Vector.tabulate(l, l)((x, y) => m(i + x)(y + j))
   }
 
-
   //////////////////////////////////////////////////////////////////////////////////////
 
   // Ejercicio 1.2.2
-/*
-  def sumMatriz(m1: Matriz, m2: Matriz): Matriz = {
-    val l = m1.length
-    val resultado = (0 until l).map(i => (0 until l).map(j => m1(i)(j) + m2(i)(j)).toVector).toVector
-    resultado
-  }
-*/
   def sumMatriz(m1: Matriz, m2: Matriz): Matriz = {
     val l = m1.length
     Vector.tabulate(l, l)((i, j) => m1(i)(j) + m2(i)(j))
   }
-
-/*
-  def sumMatriz(m1: Matriz, m2: Matriz): Matriz = {
-    val l = m1.length
-
-    val resultado = for (i <- 0 until l) yield {
-      for (j <- 0 until l) yield {
-        m1(i)(j) + m2(i)(j)
-      }
-    }
-    resultado.map(_.toVector).toVector
-  }
-*/
-
 
   ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -237,44 +172,52 @@ package object Matrices {
 
   // Ejercicio 1.3.2
 
-  def multiStrassen(m1: Matriz, m2: Matriz): Matriz = {
+  def multStrassen(m1: Matriz, m2: Matriz): Matriz = {
     val n = m1.length
 
-    if (n == 1) {
-      Vector(Vector(m1(0)(0) * m2(0)(0)))
+    if (n <= 1) {
+      // Caso base: Multiplicación directa para matrices 1x1
+      Vector.tabulate(n, n)((i, j) => m1(i)(0) * m2(0)(j))
     } else {
-      val medio = n / 2
+      val half = n / 2
 
-      val a11 = subMatriz(m1, 0, 0, medio)
-      val a12 = subMatriz(m1, 0, medio, medio)
-      val a21 = subMatriz(m1, medio, 0, medio)
-      val a22 = subMatriz(m1, medio, medio, medio)
+      // Dividir las matrices en submatrices
+      val a11 = subMatriz(m1, 0, 0, half)
+      val a12 = subMatriz(m1, 0, half, half)
+      val a21 = subMatriz(m1, half, 0, half)
+      val a22 = subMatriz(m1, half, half, half)
 
-      val b11 = subMatriz(m2, 0, 0, medio)
-      val b12 = subMatriz(m2, 0, medio, medio)
-      val b21 = subMatriz(m2, medio, 0, medio)
-      val b22 = subMatriz(m2, medio, medio, medio)
+      val b11 = subMatriz(m2, 0, 0, half)
+      val b12 = subMatriz(m2, 0, half, half)
+      val b21 = subMatriz(m2, half, 0, half)
+      val b22 = subMatriz(m2, half, half, half)
 
-      // Calcular las submatrices recursivamente
-      val p1 = multiStrassen(sumMatriz(a11, a22), sumMatriz(b11, b22))
-      val p2 = multiStrassen(sumMatriz(a21, a22), b11)
-      val p3 = multiStrassen(a11, restaMatriz(b12, b22))
-      val p4 = multiStrassen(a22, restaMatriz(b21, b11))
-      val p5 = multiStrassen(sumMatriz(a11, a12), b22)
-      val p6 = multiStrassen(restaMatriz(a21, a11), sumMatriz(b11, b12))
-      val p7 = multiStrassen(restaMatriz(a12, a22), sumMatriz(b21, b22))
+      // Calcular los productos intermedios
+      val p1 = multStrassen(sumMatriz(a11, a22), sumMatriz(b11, b22))
+      val p2 = multStrassen(sumMatriz(a21, a22), b11)
+      val p3 = multStrassen(a11, restaMatriz(b12, b22))
+      val p4 = multStrassen(a22, restaMatriz(b21, b11))
+      val p5 = multStrassen(sumMatriz(a11, a12), b22)
+      val p6 = multStrassen(restaMatriz(a21, a11), sumMatriz(b11, b12))
+      val p7 = multStrassen(restaMatriz(a12, a22), sumMatriz(b21, b22))
 
-      val c11 = restaMatriz(sumMatriz(sumMatriz(p1, p4), p7), p5)
+      // Calcular las submatrices del resultado
+      val c11 = sumMatriz(sumMatriz(p1, p4), restaMatriz(p7, p5))
       val c12 = sumMatriz(p3, p5)
       val c21 = sumMatriz(p2, p4)
-      val c22 = restaMatriz(sumMatriz(sumMatriz(p1, p3), p6), p2)
+      val c22 = sumMatriz(restaMatriz(p1, p2), sumMatriz(p3, p6))
 
-      val arriba = Vector.tabulate(n)(i => c11(i) ++ c12(i))
-      val abajo = Vector.tabulate(n)(i => c21(i) ++ c22(i))
-      arriba ++ abajo
+      // Combinar las submatrices en la matriz resultado
+      val result = Vector.tabulate(n, n)((i, j) =>
+        if (i < half && j < half) c11(i)(j)
+        else if (i < half && j >= half) c12(i)(j - half)
+        else if (i >= half && j < half) c21(i - half)(j)
+        else c22(i - half)(j - half)
+      )
+
+      result
     }
   }
-
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////
 
