@@ -176,12 +176,10 @@ package object Matrices {
     val n = m1.length
 
     if (n <= 1) {
-      // Caso base: Multiplicación directa para matrices 1x1
       Vector.tabulate(n, n)((i, j) => m1(i)(0) * m2(0)(j))
     } else {
       val half = n / 2
 
-      // Dividir las matrices en submatrices
       val a11 = subMatriz(m1, 0, 0, half)
       val a12 = subMatriz(m1, 0, half, half)
       val a21 = subMatriz(m1, half, 0, half)
@@ -192,7 +190,6 @@ package object Matrices {
       val b21 = subMatriz(m2, half, 0, half)
       val b22 = subMatriz(m2, half, half, half)
 
-      // Calcular los productos intermedios
       val p1 = multStrassen(sumMatriz(a11, a22), sumMatriz(b11, b22))
       val p2 = multStrassen(sumMatriz(a21, a22), b11)
       val p3 = multStrassen(a11, restaMatriz(b12, b22))
@@ -201,20 +198,17 @@ package object Matrices {
       val p6 = multStrassen(restaMatriz(a21, a11), sumMatriz(b11, b12))
       val p7 = multStrassen(restaMatriz(a12, a22), sumMatriz(b21, b22))
 
-      // Calcular las submatrices del resultado
       val c11 = sumMatriz(sumMatriz(p1, p4), restaMatriz(p7, p5))
       val c12 = sumMatriz(p3, p5)
       val c21 = sumMatriz(p2, p4)
       val c22 = sumMatriz(restaMatriz(p1, p2), sumMatriz(p3, p6))
 
-      // Combinar las submatrices en la matriz resultado
       val result = Vector.tabulate(n, n)((i, j) =>
         if (i < half && j < half) c11(i)(j)
         else if (i < half && j >= half) c12(i)(j - half)
         else if (i >= half && j < half) c21(i - half)(j)
         else c22(i - half)(j - half)
       )
-
       result
     }
   }

@@ -60,6 +60,12 @@ multMatrizRecPar(m1,m2)
 multMatrizRecPar(m1,m2)
 multMatrizRecPar(m1,m2)
 
+multStrassen(matriz1,matriz2)
+multStrassen(matriz4,matriz3)
+multStrassen(matriz5,matriz5)
+multStrassen(matriz2,matriz1)
+multStrassen(matriz3,matriz4)
+
 //1.3.1
 restaMatriz(m1,m2)
 restaMatriz(m1,m2)
@@ -67,8 +73,4 @@ restaMatriz(m1,m2)
 restaMatriz(m1,m2)
 restaMatriz(m1,m2)
 
-multStrassen(m1,m2)
-multStrassen(m1,m2)
-multStrassen(m1,m2)
-multStrassen(m1,m2)
-multStrassen(m1,m2)
+
