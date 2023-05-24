@@ -33,7 +33,7 @@ val matriz4 = Vector(Vector(1,1,1,1), Vector(0,0,0,0), Vector(1,1,1,1), Vector(0
 val matriz5 = Vector(Vector(1))
 
 
-subMatriz(matriz1,0,0,1)
+//subMatriz(matriz1,0,0,1)
 subMatriz(matriz2,0,0,2)
 subMatriz(matriz3,1,1,3)
 subMatriz(matriz4,2,2,2)
@@ -47,24 +47,34 @@ sumMatriz(matriz4,matriz3)
 sumMatriz(matriz5,matriz5)
 
 //1.2.3
+
+val matrizXD = Vector(Vector(0,1,2,3,4,5,6,7), Vector(0,1,2,3,4,5,6,7),Vector(0,1,2,3,4,5,6,7),Vector(0,1,2,3,4,5,6,7),Vector(0,1,2,3,4,5,6,7),Vector(0,1,2,3,4,5,6,7),Vector(0,1,2,3,4,5,6,7),Vector(0,1,2,3,4,5,6,7))
+
+multMatrizRec(matriz1,matriz2)
+multMatrizRec(matriz3,matriz3)
+multMatrizRec(matrizXD,matrizXD)
+/*
 multMatrizRec(m1,m2)
-multMatrizRec(m1,m2)
-multMatrizRec(m1,m2)
-multMatrizRec(m1,m2)
-multMatrizRec(m1,m2)
+multMatrizRec(m1,m2)*/
 
 //1.2.4
+multMatrizRecPar(matriz1,matriz2)
+/*multMatrizRecPar(m1,m2)
 multMatrizRecPar(m1,m2)
 multMatrizRecPar(m1,m2)
 multMatrizRecPar(m1,m2)
-multMatrizRecPar(m1,m2)
-multMatrizRecPar(m1,m2)
-
+*/
 multStrassen(matriz1,matriz2)
 multStrassen(matriz4,matriz3)
 multStrassen(matriz5,matriz5)
 multStrassen(matriz2,matriz1)
 multStrassen(matriz3,matriz4)
+
+multStrassenPar(matriz1,matriz2)
+multStrassenPar(matriz4,matriz3)
+multStrassenPar(matriz5,matriz5)
+multStrassenPar(matriz2,matriz1)
+multStrassenPar(matriz3,matriz4)
 
 //1.3.1
 restaMatriz(m1,m2)
